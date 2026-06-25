@@ -1,76 +1,35 @@
-## Hi, I'm Kyle (Jen-Kai Lin)
+# Hi, I'm Kyle (Jen-Kai Lin)
 
-Independent researcher focused on **structurally faithful 3D generation** — building
-diffusion-based models that produce 3D content that is not only visually plausible
-but also structurally and geometrically consistent with object priors.
+I work on structurally faithful 3D generation. I build diffusion models that make 3D objects and scenes that look right and are also correct in their structure and geometry.
 
-I see this as a prerequisite for moving generative 3D from *"looks like"* to *"usable scenes."*
+I see this as the first step for moving generative 3D from "looks like" to "usable scenes."
 
-### Research Interest
+### My research stance
 
-My current focus is **sampling-time guidance for 3D diffusion models** — how to
-enforce structural priors (topology, connectivity, geometric consistency) during the
-reverse process, without retraining the denoiser or modifying its architecture.
+I think 3D generation needs two signals, and they split by what you can see.
 
-I view sampling-time guidance as a valuable complement to conditioning-based
-control: useful precisely in regimes where paired data is scarce, the constraint is
-underdetermined, and naturalness must come from the diffusion prior rather than
-from supervision.
+- **Visual signal.** The look, style, and meaning of an object live on the surface. A 3D model trained on little data is usually too weak to do this alone, so appearance should lean on a strong 2D image prior.
+Structural signal. Whether the geometry actually holds up often lives in places a 2D prior cannot see. This needs a separate scorer that reads the 3D shape directly.
+- **A 2D prior only touches the surface.** Structural correctness lives under it. The two signals can even be different in kind. Visual control can go through SDS, while geometry control can go through sampling-time guidance. How each one enters sampling, and how they combine, is what I study.
 
 ### Current Work
 
 🌳 **[CAST — Connectivity-Aware Sampling for Topology](https://github.com/KyleLin0927/cast-gen3d-tree)**
 
-A training-free sampling-time guidance method on a 3D voxel DDPM. A 346K-parameter
-topology scorer (trained in 145 seconds) is injected into the reverse process between
-t=800 and t=300, raising connectivity success from 6.5% to 30% on Minecraft-style
-tree voxel data — without retraining the denoiser or modifying the architecture.
-
-Three findings I find interesting:
-
-- Connectivity failure in 3D generation is a **sampling-dynamics problem**, not a
-  model-capacity problem. Successful and failed samples diverge between
-  t = 800 and t = 600 (T = 1000) and rarely self-recover afterwards.
-- Guidance applied in a **mid-sampling window** passes both connectivity and
-  naturalness sanity checks; intervening too early oversimplifies structure,
-  intervening too late leaves no room for the prior to restore naturalness.
-- A **lightweight, on-demand scorer** is a practical alternative to conditioning-based
-  control when data is scarce — control can be split into multiple narrow,
-  domain-specific scorers rather than relying on a single general one.
+CAST is my proof of concept for the structural half. It is a training-free, sampling-time guidance method on a 3D voxel DDPM. I train the model on Minecraft-style tree data, where structure is easy to see and measure. A small topology scorer (346K parameters, trained in 145 seconds) is added into the reverse process between t=800 and t=300. This raises connectivity success from 6.5% to 30%, with no retraining of the denoiser and no change to its architecture.
 
 ### Directions I Want to Pursue
 
-- Extending CAST to **standard 3D shape benchmarks** (e.g., ShapeNet) with
-  cross-category topology metrics.
-- Transferring sampling-time geometric guidance from **voxels to 3D Gaussian
-  Splatting** and hybrid representations, where failure modes are different.
-- The **multi-guidance composition problem** — how to combine multiple narrow
-  scorers when their gradients conflict (sum, uncertainty-weighted, projected
-  onto compatible subspaces?). This becomes central as soon as guidance scales
-  beyond a single objective.
+- Map where 2D priors fail on structure. I think a 2D prior cannot judge structure it cannot see, but I want to measure how far that goes. I will take 3D objects with clear structure, break them in controlled ways, and check whether a 2D prior reacts.
+- Combine appearance and structure signals. CAST uses only a geometry scorer right now. The next step is to pair it with a domain-aligned 2D prior, so geometry keeps the structure correct while the 2D prior handles style and texture.
 
 ### Long-term Vision
 
-I want to work on **virtual worlds that people can enter and form memories in** —
-worlds with enough structural and behavioral consistency to carry exploration,
-encounter, and meaning, not just visual appearance.
+I want to build virtual worlds that people can walk into and remember. Not a picture you look at from outside, but a place you can step into, explore, and find meaning in.
 
-Current 3D generation tools cannot yet support this vision. The bottleneck is not
-rendering or texture quality, but **representations and generative engines that can
-produce coherent, physically and structurally consistent worlds**. I would rather
-help build that engine than be limited by what existing tools can do.
+For that, a world has to be made of real structure, not something that only looks right from one angle. Today's tools cannot do this yet. The limit is not rendering or texture. It is that we still lack representations and engines that can build worlds that hold together. I would rather help build that engine than be stuck with what current tools allow.
 
-### Background
-
-- 📚 BSc in Chemistry, National Chung Hsing University (2022). Self-taught ML
-  and computer graphics over the past year; implemented every component of CAST
-  in PyTorch from the original papers, including DDPM, 3D U-Net, classifier
-  guidance, the topology scorer, and the full sampling pipeline.
-- 💼 Previously full-stack engineer at Taiwan Mobile (cryptocurrency exchange
-  systems) and contributor to **Apache Gravitino**. Comfortable with production
-  system design and end-to-end research engineering.
-- 🎯 Currently seeking a research assistant position to build a research track
-  record before applying for CS master's programs in Fall 2027.
+So here is the real goal behind all of it: use AI and Gen 3D to build new worlds, and one day become a Pokémon Trainer in one of them.
 
 ### Contact
 
